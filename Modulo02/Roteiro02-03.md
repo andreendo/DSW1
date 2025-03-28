@@ -32,6 +32,16 @@
    mvn -N io.takari:maven:wrapper
    ```
 
+   - No arquivo pom.xml, modifique a versão do Java:
+  
+    ```xml
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+      </properties>
+    ```
+
 3. Abra o diretório AloMundoMVN em um editor de texto (ex: Visual Studio Code). Adicionar a seguinte dependência e plugin ao arquivo **pom.xml** 
 
    ```xml
