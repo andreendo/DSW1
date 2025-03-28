@@ -49,6 +49,12 @@ Algumas sugestões incluídas por André T. Endo.
 
 
 - - -
+#### Intellij IDEA
+- - -
+
+Faça o download em https://www.jetbrains.com/pt-br/idea/download; a versão community é suficiente mas a versão Pro pode ser obtida pedindo uma licença acadêmica. 
+
+- - -
 #### Apache Maven
 - - -
 
