@@ -271,7 +271,7 @@ public class MainServlet extends HttpServlet {
 
 - MODIFICAÇÃO 1: Mova o código que trata das 3 rotas (postar, listar, erro) para uma nova classe. Nesta nova classe, cada rota deve ser tratada em um método específico. 
 
-- MODIFICAÇÃO 2: Vamos modificar o código para evitar múltiplas linhas para imprimir código HTML. Crie na raiz do projeto uma pasta pages e adicione arquivos HTML das páginas. 
+- MODIFICAÇÃO 2: Vamos modificar o código para evitar múltiplas linhas para imprimir código HTML. Crie na raiz do projeto uma pasta pages e adicione arquivos HTML das páginas. Use um código similar ao abaixo:
 
 ```java
         String htmlContent = Files.readString(Path.of("/home/andre/web1/muralv1/pages/erro.html"));
@@ -281,7 +281,9 @@ public class MainServlet extends HttpServlet {
         out.println(htmlContent);
         out.close();
 ```
-    - Perceba que esse HTML tem uma parte dinâmica, a solução usada foi adicionar a keyword `__ROTA__` no arquivo HTML e trocar ela pelo conteúdo dinâmico usando o método replace() da classe String. Veja o HTML a seguir:
+    
+- Perceba que esse HTML tem uma parte dinâmica, a solução usada foi adicionar a keyword `__ROTA__` no arquivo HTML e trocar ela pelo conteúdo dinâmico usando o método replace() da classe String. Veja o HTML a seguir:
+
 
 ```html
 <html>
@@ -294,6 +296,8 @@ public class MainServlet extends HttpServlet {
 </body>
 </html>
 ```
-    - Implemente um mecanismo similar para a página principal do mural. 
+- Implemente um mecanismo similar para a página principal do mural. 
 
 - MODIFICAÇÃO 3: Melhore visualmente a apresentação das páginas usando alguns recursos de HTML e CSS. Use JavaScript para fazer algumas validações básicas no formulário. Neste caso, adicione códigos CSS e JavaScript dentro da tag `<head>` para simplificar.  
+
+- DESAFIO: Nesta implementação, a classe `Mural` pode ser acessada de maneira concorrente quando múltiplas requests acontecem ao mesmo tempo. Investigue e modifique a classe para reduzir/evitar problemas de concorrência. 
