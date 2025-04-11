@@ -155,19 +155,6 @@
    http://localhost:8080/EscopoSessao/ExibirSessao
 
    
-
-   
-
-   
-
-   
-
-   
-
-   
-
-   
-
 5. Atualizar o arquivo **web.xml**
 
    ```xml
@@ -179,7 +166,14 @@
    </web-app>
    ```
 
-6. Fim
+6. Criar um servlet para invalidar a sessão. Use:
+
+```java
+    request.getSession().invalidate();
+```
+
+
+7. Fim
 
 
 
