@@ -75,6 +75,39 @@
    </html>
    ```
 
+- Solução alternativa (adicione a dependência do VAVR)
+
+    ```xml
+        <dependency>
+          <groupId>io.vavr</groupId>
+          <artifactId>vavr</artifactId>
+          <version>0.10.4</version>
+        </dependency>
+    ```
+
+    ```jsp
+    <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+    <%@ page import="io.vavr.control.Try" %>
+    <%@ page import="io.vavr.control.Option" %>
+    <html>
+    <head>
+        <title>Hello 2</title>
+    </head>
+    <body>
+        <h2>Hello with parameters</h2>
+    <%
+        var num = Try.of(() -> Integer.parseInt(request.getParameter("num"))).getOrElse(5);
+        String nome = Option.of(request.getParameter("nome")).getOrElse("fulano");
+
+        for(int i = 1; i <= num; i++) {
+    %>
+            Olá <%=nome %>!<br/>
+    <%
+        }
+    %>
+    </body>
+    </html>
+    ```
    
 
 5. Fim
