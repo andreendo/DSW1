@@ -15,8 +15,7 @@ public class AcessaBD {
 
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			String url = "jdbc:mysql://localhost:3306/Livraria";
-			Connection con = (Connection) DriverManager.getConnection(url,
-					"root", "root");
+			Connection con = (Connection) DriverManager.getConnection(url, "root", "root");
 
 			/* Setup para uso do banco de dados PostgreSQL */
 
@@ -31,17 +30,26 @@ public class AcessaBD {
 			/*
 			 * Class.forName("org.apache.derby.jdbc.ClientDriver");
 			 * String url = "jdbc:derby://localhost:1527/Livraria";
-			 * Connection con = (Connection) DriverManager.getConnection(url,
-			 * "root", "root");
+			 * Connection con = (Connection) DriverManager.getConnection(url, "root", "root");
+			 */
+
+			/* Setup para uso do banco de dados SQLite */
+			
+			/*
+			 * Class.forName("org.sqlite.JDBC");
+			 * String url = "jdbc:sqlite:./db/SQLite/Livraria.db";
+			 * Connection con = (Connection) DriverManager.getConnection(url);
 			 */
 
 			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery("select * from Livro");
+			String query = "SELECT l.titulo, l.autor, l.ano, l.preco, e.nome FROM Livro l, Editora e WHERE l.editora_id = e.id;";
+			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
-				System.out.print(rs.getString("Titulo"));
-				System.out.print(", " + rs.getString("Autor"));
-				System.out.print(", " + rs.getInt("Ano"));
-				System.out.println(" (R$ " + rs.getFloat("Preco") + ")");
+				System.out.print(rs.getString("titulo"));
+				System.out.print(", " + rs.getString("autor"));
+				System.out.print(", " + rs.getInt("ano"));
+				System.out.print(", " + rs.getString("nome"));
+				System.out.println(" (R$ " + rs.getFloat("preco") + ")");
 			}
 			stmt.close();
 			con.close();
