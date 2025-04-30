@@ -39,7 +39,7 @@ __MENSAGEM__
 </html>
 ```
 
-    - Modifique o método da classes `Rotas.listar(..)`:
+- Modifique o método da classes `Rotas.listar(..)`:
 
 ```java
     public static void listar(HttpServletRequest req, HttpServletResponse resp, Mural mural) 
@@ -49,7 +49,7 @@ __MENSAGEM__
     }
 ```
 
-    - Modifique o arquivo `main.jsp` para mostrar as mensagens:
+- Modifique o arquivo `main.jsp` para mostrar as mensagens:
 
 ```jsp
 
@@ -121,7 +121,7 @@ disconnect;
 quit;
 ```
 
-    - Alguns comandos para criar no banco de dados no Derby.
+- Alguns comandos para criar no banco de dados no Derby.
 
 ```sh
 >> java -Dderby.system.home=livraria/db -jar  <DERBY_HOME_PATH>/lib/derbyrun.jar ij
@@ -134,7 +134,7 @@ quit;
 ```
 
 
-    - Adicione as dependências:
+- Adicione as dependências:
 
 ```xml
 <dependency>
@@ -151,7 +151,7 @@ quit;
 </dependency>
 
 ```
-    - Crie as classes a seguir e teste a conexão com o banco de dados:
+- Crie as classes a seguir e teste a conexão com o banco de dados:
 
 ```java
 // arquivo MuralDAO.java
@@ -236,7 +236,7 @@ public class TestMuralDAO {
 
 ```
 
-    - Adicionar a conexão com o banco ao projeto. No caso, o Tomcat irá gerenciar a criação das conexões com o BD. O Tomcat cria um pool de conexões com o BD, definindo o número máximo de conexões, o máximo de conexões idle, e o tempo máximo de espera para obter uma conexão antes de lançar uma exception (-1 - infinito).
+- Adicionar a conexão com o banco ao projeto. No caso, o Tomcat irá gerenciar a criação das conexões com o BD. O Tomcat cria um pool de conexões com o BD, definindo o número máximo de conexões, o máximo de conexões idle, e o tempo máximo de espera para obter uma conexão antes de lançar uma exception (-1 - infinito).
 
 ```xml
 <!-- adicione o este arquivo em /webapp/META-INF/context.xml -->
@@ -255,7 +255,7 @@ public class TestMuralDAO {
 </Context>
 ```
 
-    - No Servlet, faça as alterações a seguir.
+- No Servlet, faça as alterações a seguir.
 
 ```java
 package org.example;
@@ -451,7 +451,7 @@ public class PostarServlet extends HttpServlet {
       </plugin>
 ```
 
-    - Criar arquivos de propriedades para internacionalização.
+- Criar arquivos de propriedades para internacionalização.
 
 ```
 // -- main/resources/messages_en.properties
@@ -462,7 +462,8 @@ see_messages_in_the_board = See the messages in the board
 message_board = Mural de Mensagens
 see_messages_in_the_board = Veja as mensagens no mural
 ```
-    - Exemplo de internacionalização, usando fmt do JSTL:
+
+- Exemplo de internacionalização, usando fmt do JSTL:
 
 ```jsp
 <!-- index.jsp -->
@@ -480,7 +481,7 @@ see_messages_in_the_board = Veja as mensagens no mural
 </html>
 </fmt:bundle>
 ```
-    - Exemplo de JSTL, usando `<c:forEach>`:
+- Exemplo de JSTL, usando `<c:forEach>`:
 
 ```jsp
 <!-- main.jsp -->
