@@ -42,8 +42,14 @@
 
     • Abrir http://localhost:8080 e notar que nenhuma pagina é apresentada
 
+    - No Intellij, ao disparar o processo de build (ctrl+F9) é suficiente para recarregar a aplicação (hot-reload). 
+
+    - Se precisar, você pode forçar um build completo com `mvnw clean spring-boot:run`
+
 5. Criar o controlador **br.ufscar.dc.dsw.controller.AloMundoController**
     Arquivo: **src/main/java/br/ufscar/dc/dsw/controller/AloMundoController.java**
+
+    -   Lembre de sempre colocar as classes em subpacotes do entry point da aplicação. 
     
     ```java
     package br.ufscar.dc.dsw.controller;
@@ -125,7 +131,42 @@
 
 10. Executar novamente e ver o efeito (a página **index.html** é renderizada com a horário/data corrente)
 
-11. Fim
+11. Adicione um logger:
+
+```java
+package br.ufscar.dc.dsw.AloMundoMVC.controllers;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+@Controller
+public class AloMundoController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AloMundoController.class);
+
+    @GetMapping("/")
+    public String index(Model model) {
+        logger.info("GET /");
+
+        var dateFormat1 = new SimpleDateFormat("dd MMMM yyyy");
+        var dateFormat2 = new SimpleDateFormat("HH:mm:ss");
+        var date = new Date();
+        model.addAttribute("data", dateFormat1.format(date));
+        model.addAttribute("hora", dateFormat2.format(date));
+        return "index";
+    }
+
+}
+
+```
+
+12. Fim
 
 
 
