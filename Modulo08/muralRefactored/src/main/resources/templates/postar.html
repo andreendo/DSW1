@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mural</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <h1>Envie uma mensagem para o Mural</h1>
+    <ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/mensagens}">Ver Mensagens</a></li>
+    </ul>
+
+    <form th:action="@{/postar}" th:object="${sendMessageForm}" method="post">
+        <label for="from">Enviado por:</label><br>
+        <input type="text" th:field="*{from}"><br>
+        <div th:if="${#fields.hasErrors('from')}" th:errors="*{from}" class="error-message"></div>
+        <br>
+
+        <label for="to">Enviado para:</label><br>
+        <input type="text" th:field="*{to}"><br>
+        <div th:if="${#fields.hasErrors('to')}" th:errors="*{to}" class="error-message"></div>
+        <br>
+
+        <label for="message">Mensagem:</label><br>
+        <textarea th:field="*{message}" rows="6" cols="40"></textarea><br>
+        <div th:if="${#fields.hasErrors('message')}" th:errors="*{message}" class="error-message"></div>
+        <br>
+        <div th:if="${#fields.hasGlobalErrors()}">
+            <div th:each="err : ${#fields.globalErrors()}" class="error-message" th:text="${err}"></div>
+        </div>
+        <button type="submit">Enviar</button><br>
+    </form>
+
+</body>
+</html>

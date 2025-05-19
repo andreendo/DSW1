@@ -611,7 +611,7 @@ public class SendMessageForm {
 
 #### Salvar dados em um banco de dados
 
-- Adicionar ao `pom.xml`: 
+- Adicionar os drivers do SBGD no arquivo `pom.xml`: 
 
 ```xml
         <dependency>
@@ -624,9 +624,29 @@ public class SendMessageForm {
 			<version>8.0.21</version>
 			<scope>runtime</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbyclient</artifactId>
+            <version>10.14.2.0</version>
+            <scope>runtime</scope>
+        </dependency>
 ```
 
-- Criar o banco de dados no MySQL ou outro SGBD de sua escolha. 
+- Criar o banco de dados `muralspring` no MySQL ou outro SGBD de sua escolha. 
+
+    - No Apache Derby, abra seu interpretador e execute os seguintes comandos:
+
+```bash
+>> java -Dderby.system.home=<DB_HOME> -jar  $DERBY_HOME/lib/derbyrun.jar ij
+
+# No interpretador ij
+ij>> connect 'jdbc:derby:muralspring;create=true;user=root;password=root'; 
+ij>> disconnect;
+ij>> quit;
+
+# inicia o server
+>> java -Dderby.system.home=<DB_HOME> -jar  db-derby-10.17.1.0-bin/lib/derbyrun.jar server start
+```
 
 - Configure o arquivo `application.properties`.
     - Certifique-se que o SGBD foi inicializado e o BD foi criado. Caso contrário, a aplicação falha na inicialização e o servidor não começa a aceitar requisições. 
@@ -639,6 +659,12 @@ spring.datasource.url = jdbc:mysql://localhost:3306/muralspring
 spring.datasource.username = root
 spring.datasource.password = root
 
+# Derby
+# spring.datasource.url=jdbc:derby://localhost:1527/muralspring
+# spring.datasource.username = root
+# spring.datasource.password = root
+# spring.datasource.driver-class-name=org.apache.derby.jdbc.ClientDriver
+
 # JPA
 spring.jpa.hibernate.ddl-auto = update
 spring.jpa.show-sql = true
@@ -647,4 +673,138 @@ spring.jpa.hibernate.naming.physical-strategy = org.hibernate.boot.model.naming.
 
 # THYMELEAF
 spring.thymeleaf.cache = false
+```
+
+- Refatorar a classe Message com informações específicas de persistência
+
+```java
+// Message.java
+package com.example.mural.repositories;
+
+import jakarta.persistence.*;
+
+@Entity
+public class Message {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //private int id; // usar tipo Long para ids
+    private Long id;
+    @Column(name = "mFrom") // from é keyword do SQL, evita erro na criação do BD
+    private String from;
+    @Column(name = "mTo")
+    private String to;
+    private String message;
+    private String timestamp;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+    @Override
+    public String toString() {
+        return String.format("Message[id='%d', from='%s', to='%s', message='%s', timestamp='%s']", id, from, to, message, timestamp);
+    }
+}
+```
+
+- Crie a interface `IMessageDAO`, Spring Data e JPA fará todo o meio de campo com o SGBD:
+
+```java
+package com.example.mural.repositories;
+
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+
+import java.util.List;
+
+public interface IMessageDAO extends CrudRepository<Message, Long> {
+
+    public Message save(Message message);
+
+    public List<Message> findAll();
+
+    @Query("SELECT m FROM Message m ORDER BY m.id DESC")
+    public List<Message> findAllOrderedByIdDesc();
+}
+
+```
+
+- Refatorar a classe `` é suficiente para que a aplicação agora use a conexão com o SGBD:
+
+```java
+package com.example.mural.repositories;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+@Repository
+public class MessageRepository {
+
+    private Logger logger = LoggerFactory.getLogger(MessageRepository.class);
+
+//    private List<Message> messages;
+
+    private final IMessageDAO messageDAO;
+
+    public MessageRepository(IMessageDAO messageDAO) {
+//        messages = new ArrayList<>();
+        this.messageDAO = messageDAO;
+        logger.info("MessageRepository instantiated");
+    }
+
+    public void save(Message message) {
+//        message.setId(messages.size() + 1);
+        message.setTimestamp((new Date()).toString());
+        var saved = messageDAO.save(message);
+        logger.info("saving message: {}", saved);
+//        messages.add(message);
+//        logger.info("# messages: {}", messages.size());
+    }
+
+    public List<Message> getMessages() {
+        return messageDAO.findAllOrderedByIdDesc();
+//        return messageDAO.findAll();
+//        return messages;
+    }
+}
 ```
