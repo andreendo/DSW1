@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Default Title</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:fragment="siteHeader">
+    <div class="mural-header">
+        <b>Usuário:</b>
+        <span th:text="${#authentication.name}">Teste</span>
+    </div>
+</div>
+</body>
+</html>
