@@ -808,3 +808,448 @@ public class MessageRepository {
     }
 }
 ```
+
+#### Incluir autenticação
+
+- Adicionar dependências no arquivo `pom.xml`.
+
+```xml
+		<!-- security -->
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-springsecurity6</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>webjars-locator-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery</artifactId>
+			<version>3.4.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>bootstrap</artifactId>
+			<version>4.4.1-1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>open-iconic</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>jquery-mask-plugin</artifactId>
+			<version>1.14.15</version>
+		</dependency>
+
+		<dependency>
+			<groupId>nz.net.ultraq.thymeleaf</groupId>
+			<artifactId>thymeleaf-layout-dialect</artifactId>
+		</dependency>
+
+		<!-- security -->
+
+```
+
+- Adicionar a classe a seguir. Reinicie a aplicação e verifique se a autenticação funcionou.
+
+```java
+package com.example.mural.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class WebSecurityConfig {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(auth ->
+                        auth.anyRequest().authenticated()
+                )
+                .formLogin(Customizer.withDefaults());
+
+        return http.build();
+    }
+
+    @Bean
+    public UserDetailsService users() {
+        UserDetails user = User.withUsername("andre")
+                .password(passwordEncoder().encode("123"))
+                .roles("USER")
+                .build();
+
+        return new InMemoryUserDetailsManager(user);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+}
+```
+
+- Adicionar um link de logout no `index.html`: `<li><a th:href="@{/logout}">Logout</a></li>`.
+
+- Modificar para que a autenticação aconteça por meio de usuários armazenados no SGBD.
+
+```java
+// User.java
+package com.example.mural.repositories;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String username;
+    private String password;
+    private String role;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
+                '}';
+    }
+}
+
+// IUserDAO.java
+package com.example.mural.repositories;
+
+import org.springframework.data.repository.CrudRepository;
+
+import java.util.Optional;
+
+public interface IUserDAO extends CrudRepository<User, Long> {
+
+    Optional<User> findByUsername(String username);
+
+    User save(User user);
+}
+
+// UserRepository
+package com.example.mural.repositories;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public class UserRepository {
+
+    private final IUserDAO userDAO;
+
+    public UserRepository(IUserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
+
+    public Optional<User> findByUsername(String username) {
+        return userDAO.findByUsername(username);
+    }
+
+    public long count() {
+        return userDAO.count();
+    }
+
+    public void save(String username, String password, String role) {
+        var encoder = new BCryptPasswordEncoder();
+        var user = new User();
+        user.setUsername(username);
+        user.setPassword(encoder.encode(password));
+        user.setRole(role);
+        userDAO.save(user);
+    }
+}
+
+// CustomUserDetailsService.java
+package com.example.mural.config;
+
+import com.example.mural.repositories.UserRepository;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    private final UserRepository userRepository;
+
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        return User.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .roles(user.getRole())
+                .build();
+    }
+}
+
+```
+
+- Modificar `WebSecurityConfig.java` para usar o serviço que busca o nome do usuário do BD:
+
+```java
+package com.example.mural.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class WebSecurityConfig {
+
+    //adicionar
+    private final UserDetailsService userDetailsService;
+
+    //adicionar
+    public WebSecurityConfig(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(auth ->
+                        auth.anyRequest().authenticated()
+                )
+                .formLogin(Customizer.withDefaults())
+                .logout(Customizer.withDefaults());
+
+        return http.build();
+    }
+
+    //adicionar
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+
+    /*@Bean
+    public UserDetailsService users() {
+        UserDetails user = User.withUsername("andre")
+                .password(passwordEncoder().encode("123"))
+                .roles("USER")
+                .build();
+
+        return new InMemoryUserDetailsManager(user);
+    }*/
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+}
+```
+
+- Modificar `MuralApplication.java` para inserir 2 usuários na inicialização da aplicação, caso esteja vazio.
+
+```java
+@SpringBootApplication
+public class MuralApplication {
+
+	public static void main(String[] args) {
+		var context = SpringApplication.run(MuralApplication.class, args);
+
+		var userRepository = context.getBean(UserRepository.class);
+		if (userRepository.count() == 0) {	// sem usuários, adiciona alguns
+			userRepository.save("admin", "admin", "ADMIN");
+			userRepository.save("user", "user", "USER");
+		}
+	}
+}
+```
+
+- Mostrar usuário atualmente logado, via cabeçalho. 
+
+```css
+/* estilo do cabeçalho */
+.mural-header {
+    background-color: #b3efa4;
+    color: #201f1f;
+    padding: 20px 20px;
+    text-align: right;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+```
+
+- Criar arquivo `cabecalho.html`
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Default Title</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:fragment="siteHeader">
+    <div class="mural-header">
+        <b>Usuário:</b>
+        <span th:text="${#authentication.name}">Teste</span>
+    </div>
+</div>
+</body>
+</html>
+```
+
+- Adicionar nas páginas a instrução para incluir o cabeçalho: `<div th:insert="~{cabecalho :: siteHeader}"></div>`
+
+- Permitir acesso a uma área para cadastro de usuários. Inicialmente criar um controller e o HTML.
+
+```java
+package com.example.mural.controllers;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class CadastroController {
+
+    @GetMapping("/cadastro")
+    public String showCadastro() {
+        return "cadastro";
+    }
+}
+```
+
+```html
+<!-- cadastro.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mural</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div th:insert="~{cabecalho :: siteHeader}"></div>
+
+    <h1>Mural - Novo usuário</h1>
+</body>
+</html>
+```
+
+- Modificar a classe `WebSecurityConfig` para permitir o acesso sem autenticação na rota específica:
+
+```java
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(auth ->
+                        auth
+                                .requestMatchers("/cadastro", "/css/**", "/js/**", "/images/**") // aqui
+                                .permitAll()
+                                .anyRequest().authenticated()
+                )
+                .formLogin(Customizer.withDefaults())
+                .logout(Customizer.withDefaults());
+
+        return http.build();
+    }
+
+```
