@@ -125,3 +125,10 @@ mvn -N io.takari:maven:wrapper
 ```sh
     ./mvnw tomcat7:undeploy
 ```
+
+- Observe o log do Tomcat em tempo real, faça algumas requisições via browser.
+
+```sh
+    tail -f logs/catalina.out #não mostra exceptions
+    tail -f logs/localhost.2025-04-01.log
+```

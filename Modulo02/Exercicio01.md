@@ -93,4 +93,20 @@ public class ConcurrentClients {
 }
 ```
 
+- Use uma ferramenta específica para realizar o teste de performance (https://www.npmjs.com/package/autocannon). Instalar Node.js (e.g., usar https://github.com/nvm-sh/nvm).
+
+```sh
+npm install -g autocannon
+```
+
+- Parâmetros: -c conexões concorrentes, -d duração dos testes em segundos
+
+```sh
+autocannon -c 10 -d 10 http://localhost:8080/StaticPageServer/page?target=page_4
+autocannon -c 100 -d 10 http://localhost:8080/StaticPageServer/page?target=page_4
+autocannon -c 500 -d 10 http://localhost:8080/StaticPageServer/page?target=page_4
+autocannon -c 1000 -d 10 http://localhost:8080/StaticPageServer/page?target=page_4
+autocannon -c 20000 -d 10 --renderStatusCodes http://localhost:8080/StaticPageServer/page?target=page_4
+```
+
 - DESAFIO: Implemente um novo Servlet chamado FasterStaticPageServlet que opera na rota http://localhost:8080/StaticPageServer/fastpage e tente melhorar o desempenho do Servlet (use o response time para obter evidências da melhoria). Use arquivos HTML maiores na pasta [Exercicio01/pages2](Exercicio01/pages2). 
