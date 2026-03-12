@@ -111,3 +111,17 @@ mvn -N io.takari:maven:wrapper
 ```
 
 - Criar a pasta main/java onde as classes serão introduzidas.
+
+- Fazer o deploy do projeto.
+
+```sh
+    ./mvnw tomcat7:deploy
+```
+
+```sh
+   ./mvnw tomcat7:redeploy
+```
+
+```sh
+    ./mvnw tomcat7:undeploy
+```
