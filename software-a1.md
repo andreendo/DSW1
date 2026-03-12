@@ -3,7 +3,7 @@
 
 Algumas sugestões incluídas por André T. Endo.
 
-**Dicas sobre a instalação de softwares**
+**Dicas sobre a instalação de software**
 
 
 - - -
@@ -11,7 +11,7 @@ Algumas sugestões incluídas por André T. Endo.
 - - -
 
 1. Instalar o Java Development Kit
-2. Há duas opções atualmente, da Oracle e OpenJDK
+2. (A) Instalar o JDK manualmente. Há duas opções atualmente, da Oracle e OpenJDK
 
     ```
     https://www.oracle.com/technetwork/java/javase/downloads/index.html
@@ -19,40 +19,28 @@ Algumas sugestões incluídas por André T. Endo.
     https://openjdk.java.net/
     ```
 
-    2.1. Existe a ferramenta SDKMAN que auxilia no gerenciamento de várias versões do SDK do Java. Ele também configura automaticamente a variável de ambiente JAVA_HOME. Veja como instalar em https://sdkman.io/install e seu uso básico em https://sdkman.io/usage. Instalado, o seguinte comando pode ser usado para instalar a última versão do Java: 
+3. (B) Usar um gerenciador de versões do JDK. Existe a ferramenta **SDKMAN** que auxilia no gerenciamento de várias versões do SDK do Java. Ele também configura automaticamente a variável de ambiente JAVA_HOME. Veja como instalar em https://sdkman.io/install e seu uso básico em https://sdkman.io/usage. Instalado, o seguinte comando pode ser usado para instalar a última versão do Java: 
 
     ```sh
     sdk install java
     ```
 
-3. Para testar se funcionou, executar em um terminal
+4. Para testar se funcionou, executar em um terminal
 
     ```sh
     java -version
     javac -version
     ```
 
-
-- - -
-#### Eclipse
-- - -
-
-1. Baixar a versão *Eclipse IDE for Enterprise Java Developers* em  https://www.eclipse.org/downloads/packages/
-    - O Eclipse Installer também pode ser usado (instala o JRE junto a IDE)
-2. Descompactar o conteúdo em alguma pasta (`<instalação eclipse>`)
-
-    ```sh
-    tar -xvzf eclipse-inst-jre-linux64.tar.gz
-    ```
-
-3. Para iniciar o eclipse, clique no arquivo executável (**eclipse.exe**, **eclipse**, etc) presente no diretório `<instalação eclipse>` 
-
-
 - - -
 #### Intellij IDEA
 - - -
 
-Faça o download em https://www.jetbrains.com/pt-br/idea/download; a versão community é suficiente mas a versão Pro pode ser obtida pedindo uma licença acadêmica. 
+Faça o download em https://www.jetbrains.com/pt-br/idea/download. A versão Ultimate pode ser obtida pedindo uma licença acadêmica em https://www.jetbrains.com/academy/student-pack/ (recomendado); com a IDE aberta, vá no menu Help - Manage Subscriptions. 
+
+```sh
+    tar -xvzf idea-2025.3.3.tar.gz
+```
 
 - - -
 #### Apache Maven
@@ -100,7 +88,12 @@ Instalação Ubuntu: https://www.hostinger.com.br/tutoriais/install-maven-ubuntu
 mvn archetype:generate -DgroupId=com.example -DartifactId=proj1 -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
 ```
 
-Abra o projeto no Eclipse ou outra IDE. Modificar o arquivo pom.xml para compilar o projeto usando Java 21 e adicionar a dependência para usar a biblioteca commons-csv. Usar o site https://mvnrepository.com/ para buscar bibliotecas de interesse.  
+Ou use o recurso da IDE:
+
+![Alt text for the image](IDE-Wizard.png)
+
+
+Abra o projeto no Intellij ou outra IDE. Modificar o arquivo pom.xml para compilar o projeto usando Java 21 e adicionar a dependência para usar a biblioteca commons-csv. Usar o site https://mvnrepository.com/ para buscar bibliotecas de interesse.  
 
 ```xml
 <properties>
@@ -209,7 +202,7 @@ csvParser.close();
 
 1. Baixar o arquivo zip de ```http://tomcat.apache.org/```
 
-versão core
+versão core - testada com 11.0.5
 
 2. Descompactar em uma pasta sem espaços ou acentos (diretório `<instalação tomcat>`)
 
@@ -254,7 +247,7 @@ versão core
 
 
 - - -
-#### Apache Derby
+#### Apache Derby (SGBD para testes)
 - - -
 
 1. Baixar o servidor: `http://db.apache.org/derby/`
@@ -332,11 +325,25 @@ INSERT INTO Event (Name, EventDate) VALUES ('Churrasco da turma', '2025-06-15');
 INSERT INTO Event (Name, EventDate) VALUES ('Happyhour da Galera', '2025-07-20');
 ```
 
-
 - - -
-#### Spring Tools Suite
+#### MySQL com Docker (SGBD pode ser usado em produção)
 - - -
 
-1. Baixar a versão *Spring Tools 4 for Eclipse* em https://spring.io/tools/
-2. Descompactar o conteúdo em alguma pasta (`<instalação sts>`)
-3. Para iniciar o sts, clique no arquivo executável (**SpringToolSuite4.exe**, **SpringToolSuite4**, etc) presente no diretório `<instalação sts>` 
+O MySQL pode ser instalado diretamente no seu PC. Neste caso, optou-se pelo uso do Docker que instancia as imagens necessárias, algumas configurações e front-end para o MySQL configurado. 
+
+1. Instalação do Docker e Docker-Compose; ver https://docs.docker.com/engine/install
+
+2. Copie o arquivo [docker-compose.yml](Modulo04/docker/docker-compose.yml)
+
+3. Matar todas as imagens Docker em execução:
+```bash
+    docker stop $(docker ps -a -q)
+``` 
+
+4. Em seguida, execute o comando a seguir para iniciar os containers:
+```bash
+    docker compose up
+```
+- CRTL + C para matar o processo do Docker
+- MySQL 8 na porta 3306
+- phpMyAdmin: http://localhost:8081 (login with root / root)

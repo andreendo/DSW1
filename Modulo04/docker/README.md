@@ -7,7 +7,7 @@ First, make sure you kill all existing images:
 
 Then, run the following command to start the containers:
 ```bash
-    docker-compose up
+    docker compose up
 ```
 
 - MySQL 8 na porta 3306
