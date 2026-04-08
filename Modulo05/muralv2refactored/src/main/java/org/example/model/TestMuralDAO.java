@@ -6,8 +6,14 @@ import java.sql.SQLException;
 
 public class TestMuralDAO {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        Class.forName("org.apache.derby.jdbc.ClientDriver");
-        String url = "jdbc:derby://localhost:1527/Mural";
+        // Apache Derby
+        // Class.forName("org.apache.derby.jdbc.ClientDriver");
+        // String url = "jdbc:derby://localhost:1527/Mural";
+
+        // MySQL
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        String url = "jdbc:mysql://localhost:3306/mural2026";
+
         Connection conn = (Connection) DriverManager.getConnection(url, "root", "root");
         MuralDAO muralDAO = new MuralDAO(conn);
 

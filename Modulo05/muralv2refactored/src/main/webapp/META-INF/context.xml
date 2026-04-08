@@ -1,5 +1,6 @@
 <Context>
-    <Resource name="jdbc/muralDB"
+    <!--Derby-->
+    <Resource name="jdbc/muralDB_Derby"
               auth="Container"
               type="javax.sql.DataSource"
               maxTotal="20"
@@ -9,4 +10,15 @@
               password="root"
               driverClassName="org.apache.derby.jdbc.ClientDriver"
               url="jdbc:derby://localhost:1527/Mural"/>
+    <!--MySQL-->
+    <Resource name="jdbc/muralDB"
+              auth="Container"
+              type="javax.sql.DataSource"
+              maxTotal="20"
+              maxIdle="10"
+              maxWaitMillis="-1"
+              username="root"
+              password="root"
+              driverClassName="com.mysql.cj.jdbc.Driver"
+              url="jdbc:mysql://localhost:3306/mural2026"/>
 </Context>

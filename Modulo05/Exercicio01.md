@@ -332,6 +332,25 @@ public class MuralDAO {
             throw new SQLException("Erro na atualização");
         }
     }
+
+    public Mensagem getMensagem(int id) throws SQLException {
+        String sql = "SELECT * FROM mensagem WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                var de = rs.getString("de");
+                var para = rs.getString("para");
+                var texto = rs.getString("texto");
+                var dataEnvio = rs.getString("dataEnvio");
+                return new Mensagem(id, de, para, texto, Try.of(() -> sdf.parse(dataEnvio)).getOrElse(new Date()));
+            } else {
+                throw new SQLException("ID inexistente");
+            }
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+    }
 }
 
 // arquivo TesteMuralDAO.java

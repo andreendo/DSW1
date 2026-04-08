@@ -50,4 +50,49 @@ public class MuralDAO {
             e.printStackTrace();
         }
     }
+
+
+
+    public void excluirMensagem(Integer id) throws SQLException {
+        String sql = "DELETE FROM mensagem WHERE id = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1, id);
+        int rowsAffected = ps.executeUpdate();
+        if (rowsAffected == 0) {
+            throw new SQLException("ID inexistente");
+        }
+    }
+
+    public Mensagem getMensagem(int id) throws SQLException {
+        String sql = "SELECT * FROM mensagem WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                var de = rs.getString("de");
+                var para = rs.getString("para");
+                var texto = rs.getString("texto");
+                var dataEnvio = rs.getString("dataEnvio");
+                return new Mensagem(id, de, para, texto, Try.of(() -> sdf.parse(dataEnvio)).getOrElse(new Date()));
+            } else {
+                throw new SQLException("ID inexistente");
+            }
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+    }
+
+    public void atualizar(Mensagem mensagem) throws SQLException {
+        String sql = "UPDATE mensagem SET de = ?, para = ?, texto = ?, dataEnvio = ? WHERE id = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1, mensagem.enviadoPor());
+        ps.setString(2, mensagem.enviadoPara());
+        ps.setString(3, mensagem.texto());
+        ps.setString(4, sdf.format(new Date()));
+        ps.setInt(5, mensagem.iid());
+        int rowsAffected = ps.executeUpdate();
+        if (rowsAffected == 0) {
+            throw new SQLException("Erro na atualização");
+        }
+    }
 }

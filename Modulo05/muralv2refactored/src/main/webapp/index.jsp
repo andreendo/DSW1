@@ -7,7 +7,8 @@
 </head>
 <body>
   <h2><fmt:message key="message_board"/></h2>
-  <a href="listar"><fmt:message key="see_messages_in_the_board"/></a>
+  <a href="listar"><fmt:message key="see_messages_in_the_board"/></a> <br/>
+  <a href="listarEdicao"><fmt:message key="edit_or_remove_messages_in_the_board"/></a>
 </body>
 </html>
 </fmt:bundle>
