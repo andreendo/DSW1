@@ -39,6 +39,71 @@ __MENSAGEM__
 </html>
 ```
 
+```css
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f6f8fa;
+    color: #333;
+    margin: 30px;
+    line-height: 1.6;
+}
+
+h1 {
+    color: #2c3e50;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
+}
+
+h2 {
+    color: #34495e;
+    margin-top: 30px;
+}
+
+form {
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    max-width: 500px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #2ecc71;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #27ae60;
+}
+
+div > div {
+    background-color: #ecf0f1;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+}
+```
+
 - Modifique o método da classes `Rotas.listar(..)`:
 
 ```java
@@ -100,7 +165,7 @@ __MENSAGEM__
 ```
 
 
-- Refactoring 2: Salvar as mensagens em um banco de dados (aqui usando o Apache Derby). A modificação pode ser facilmente adaptada para usar o MySQL. 
+- Refactoring 2 (Apache Derby): Salvar as mensagens em um banco de dados. 
 
     - Crie o arquivo `mural.sql`. 
 
@@ -124,13 +189,14 @@ quit;
 - Alguns comandos para criar no banco de dados no Derby.
 
 ```sh
->> java -Dderby.system.home=livraria/db -jar  <DERBY_HOME_PATH>/lib/derbyrun.jar ij
+# abre o terminal para executar comandos no Derby
+>> java -Dderby.system.home=mural/db -jar  <DERBY_HOME_PATH>/lib/derbyrun.jar ij
 
 # Dentro do ij
->> run 'livraria/livraria.sql';
+>> run 'mural/mural.sql';
 
 ## Iniciar o servidor do Apache Derby
->> java -Dderby.system.home=livraria/db -jar <DERBY_HOME_PATH>/lib/derbyrun.jar server start
+>> java -Dderby.system.home=mural/db -jar <DERBY_HOME_PATH>/lib/derbyrun.jar server start
 ```
 
 
@@ -151,6 +217,40 @@ quit;
 </dependency>
 
 ```
+
+- Refactoring 2 (MySQL): Salvar as mensagens em um banco de dados.
+
+- Inicie o MySQL usando Docker e entre no PhpMyAdmin (http://localhost:8081/). Crie um banco de dados chamado `mural`. Execute o código SQL a seguir.
+
+```sql
+CREATE TABLE mensagem (
+    id BIGINT NOT NULL AUTO_INCREMENT, 
+    de VARCHAR(50) NOT NULL,
+    para VARCHAR(50) NOT NULL, 
+    texto VARCHAR(1024) NOT NULL,
+    dataEnvio VARCHAR(50) NOT NULL, 
+    CONSTRAINT Mensagem_PK PRIMARY KEY (id)
+);
+```
+
+- Adicione as dependências:
+
+```xml
+ <dependency>
+ 	<groupId>mysql</groupId>
+ 	<artifactId>mysql-connector-java</artifactId>
+     <version>8.0.21</version>
+ 	<scope>runtime</scope>
+ </dependency>
+ <dependency>
+        <groupId>jakarta.annotation</groupId>
+        <artifactId>jakarta.annotation-api</artifactId>
+        <version>2.1.1</version>
+        <scope>provided</scope>
+</dependency>
+
+```
+
 - Crie as classes a seguir e teste a conexão com o banco de dados:
 
 ```java
@@ -208,6 +308,30 @@ public class MuralDAO {
             e.printStackTrace();
         }
     }
+
+    public void excluirMensagem(Integer id) throws SQLException {
+        String sql = "DELETE FROM mensagem WHERE id = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1, id);
+        int rowsAffected = ps.executeUpdate();
+        if (rowsAffected == 0) {
+            throw new SQLException("ID inexistente");
+        }
+    }
+
+    public void atualizar(Mensagem mensagem) throws SQLException {
+        String sql = "UPDATE mensagem SET de = ?, para = ?, texto = ?, dataEnvio = ? WHERE id = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1, mensagem.enviadoPor());
+        ps.setString(2, mensagem.enviadoPara());
+        ps.setString(3, mensagem.texto());
+        ps.setString(4, sdf.format(new Date()));
+        ps.setInt(5, mensagem.iid());
+        int rowsAffected = ps.executeUpdate();
+        if (rowsAffected == 0) {
+            throw new SQLException("Erro na atualização");
+        }
+    }
 }
 
 // arquivo TesteMuralDAO.java
@@ -220,8 +344,14 @@ import java.sql.SQLException;
 
 public class TestMuralDAO {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        Class.forName("org.apache.derby.jdbc.ClientDriver");
-        String url = "jdbc:derby://localhost:1527/Mural";
+        // Apache Derby
+        // Class.forName("org.apache.derby.jdbc.ClientDriver");
+        // String url = "jdbc:derby://localhost:1527/Mural";
+
+        // MySQL
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        String url = "jdbc:mysql://localhost:3306/mural";
+        
         Connection conn = (Connection) DriverManager.getConnection(url, "root", "root");
         MuralDAO muralDAO = new MuralDAO(conn);
 
@@ -242,7 +372,8 @@ public class TestMuralDAO {
 <!-- adicione o este arquivo em /webapp/META-INF/context.xml -->
 <!-- Este arquivo especifica as informações para definir um recurso e o Tomcat gerencia as conexões -->
 <Context>
-    <Resource name="jdbc/muralDB"
+    <!--Derby-->
+    <Resource name="jdbc/muralDB_Derby"
               auth="Container"
               type="javax.sql.DataSource"
               maxTotal="20"
@@ -252,6 +383,17 @@ public class TestMuralDAO {
               password="root"
               driverClassName="org.apache.derby.jdbc.ClientDriver"
               url="jdbc:derby://localhost:1527/Mural"/>
+    <!--MySQL-->
+    <Resource name="jdbc/muralDB"
+              auth="Container"
+              type="javax.sql.DataSource"
+              maxTotal="20"
+              maxIdle="10"
+              maxWaitMillis="-1"
+              username="root"
+              password="root"
+              driverClassName="com.mysql.cj.jdbc.Driver"
+              url="jdbc:mysql://localhost:3306/mural"/>
 </Context>
 ```
 
@@ -414,7 +556,240 @@ public class PostarServlet extends HttpServlet {
 
 ```
 
-- Refactoring 4: Usar tags JSTL e internacionalização.
+- Refactoring 4: Edição e remoção das mensagens.
+
+```java
+// ListarEdicaoServlet.java
+package org.example.controllers;
+
+import jakarta.annotation.Resource;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.example.model.MuralDAO;
+
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.logging.Logger;
+
+@WebServlet(urlPatterns = {"/listarEdicao"})
+public class ListarEdicaoServlet extends HttpServlet {
+
+    private static Logger logger = Logger.getLogger(ListarEdicaoServlet.class.getName());
+
+    @Resource(name = "jdbc/muralDB")
+    private DataSource dataSource;
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        logger.info("Rota /listarEdicao");
+
+        try (var conn = dataSource.getConnection()) {
+            var muralDAO = new MuralDAO(conn);
+            req.setAttribute("mensagens", muralDAO.getMensagens());
+            req.getRequestDispatcher("listarEdicao.jsp").forward(req, resp);
+        } catch (SQLException e) {
+            logger.info(e.toString());
+            throw new ServletException("Erro ao acessar o banco", e);
+        }
+    }
+
+}
+
+// ExcluirServlet.java
+package org.example.controllers;
+
+import io.vavr.control.Try;
+import jakarta.annotation.Resource;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.example.model.MuralDAO;
+
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.logging.Logger;
+
+@WebServlet(urlPatterns = { "/excluir" })
+public class ExcluirServlet extends HttpServlet {
+
+    private static Logger logger = Logger.getLogger(ExcluirServlet.class.getName());
+
+    @Resource(name = "jdbc/muralDB")
+    private DataSource dataSource;
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        logger.info("Rota /excluir");
+        var id = Try.of(() -> Integer.parseInt(req.getParameter("id"))).getOrElse(-1);
+        if (id == -1) {
+            throw new ServletException("Invalid id!");
+        }
+
+        try {
+            var conn = dataSource.getConnection();
+            var muralDAO = new MuralDAO(conn);
+            muralDAO.excluirMensagem(id);
+        } catch (SQLException e) {
+            logger.info(e.toString());
+            throw new ServletException("Erro ao acessar o banco", e);
+        }
+
+        resp.sendRedirect("listarEdicao");
+    }
+}
+
+// AtualizarServlet.java
+
+package org.example.controllers;
+
+import io.vavr.control.Option;
+import io.vavr.control.Try;
+import jakarta.annotation.Resource;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.example.model.Mensagem;
+import org.example.model.MuralDAO;
+
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.logging.Logger;
+
+@WebServlet(urlPatterns = {"/atualizar"})
+public class AtualizarServlet extends HttpServlet {
+
+    private static Logger logger = Logger.getLogger(AtualizarServlet.class.getName());
+
+    @Resource(name = "jdbc/muralDB")
+    private DataSource dataSource;
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        logger.info("Rota /atualizar (GET)");
+
+        var id = Try.of(() -> Integer.parseInt(req.getParameter("id"))).getOrElse(-1);
+        if (id == -1) {
+            throw new ServletException("Invalid id!");
+        }
+
+        try (var conn = dataSource.getConnection()) {
+            var muralDAO = new MuralDAO(conn);
+            req.setAttribute("mensagem", muralDAO.getMensagem(id));
+            req.getRequestDispatcher("editar.jsp").forward(req, resp);
+        } catch (SQLException e) {
+            logger.info(e.toString());
+            throw new ServletException("Erro ao acessar o banco", e);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        logger.info("Rota /atualizar (POST)");
+
+        var id = Try.of(() -> Integer.parseInt(req.getParameter("id"))).getOrElse(-1);
+        if (id == -1) {
+            throw new ServletException("Invalid id!");
+        }
+        var enviadoPor = Option.of(req.getParameter("enviadoPor")).getOrElse("");
+        if (enviadoPor.equals(""))
+            enviadoPor = "Desconhecido";
+        var enviadoPara = Option.of(req.getParameter("enviadoPara")).getOrElse("");
+        if (enviadoPara.equals(""))
+            enviadoPara = "Desconhecido";
+        var texto = Option.of(req.getParameter("texto")).getOrElse("");
+        if (texto.equals(""))
+            texto = "Sem mensagem escrita.";
+
+        var mensagem = new Mensagem(id, enviadoPor, enviadoPara, texto, new Date());
+        try (var conn = dataSource.getConnection()) {
+            var muralDAO = new MuralDAO(conn);
+            muralDAO.atualizar(mensagem);
+            resp.sendRedirect("listarEdicao");
+        } catch (SQLException e) {
+            logger.info(e.toString());
+            throw new ServletException("Erro ao acessar o banco", e);
+        }
+    }
+}
+
+```
+
+
+```jsp
+// listarEdicao.jsp
+<%@ page import="java.util.List" %>
+<%@ page import="org.example.model.Mensagem" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page isELIgnored="false"%>
+<html>
+<head>
+  <title>Mural V2</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Mural</h1>
+<h2>Edição e Remoção das Mensagens</h2>
+
+<%
+  var mensagens = (List<Mensagem>) request.getAttribute("mensagens");
+  for (var mensagem : mensagens) {
+%>
+  <div>
+    <div>| <a href="excluir?id=<%= mensagem.iid() %>">Excluir</a> | <a href="atualizar?id=<%= mensagem.iid() %>">Atualizar</a> | <strong>De:</strong> <%= mensagem.enviadoPor() %> &nbsp; <strong>Para:</strong> <%= mensagem.enviadoPara() %> (em <%= mensagem.timestamp() %>) - <%= mensagem.texto() %></div>
+  </div>
+  <br/>
+<%
+  }
+%>
+
+</body>
+</html>
+
+//editar.jsp
+<%@ page import="org.example.model.Mensagem" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page isELIgnored="false"%>
+<%
+  var mensagem = (Mensagem) request.getAttribute("mensagem");
+%>
+<html>
+<head>
+  <title>Mural V2</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Mural</h1>
+<h2>Editar Mensagem (ID: <%= mensagem.iid() %>)</h2>
+<form action="editar" method="post">
+  <input type="hidden" name="id" value="<%= mensagem.iid() %>" />
+  <label for="enviadoPor">Enviado por:</label><br>
+  <input type="text" name="enviadoPor" value="<%= mensagem.enviadoPor() %>"><br><br>
+
+  <label for="enviadoPara">Enviado para:</label><br>
+  <input type="text" name="enviadoPara" value="<%= mensagem.enviadoPara() %>"><br><br>
+
+  <label for="texto">Mensagem:</label><br>
+  <textarea name="texto" rows="6" cols="40"><%= mensagem.texto() %></textarea><br><br>
+
+  <button type="submit">Atualizar</button>
+</form>
+</body>
+</html>
+
+```
+
+- Refactoring 5: Usar tags JSTL e internacionalização.
 
     - Alterar o `pom.xml`:
 
