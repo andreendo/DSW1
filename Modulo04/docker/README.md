@@ -12,3 +12,10 @@ Then, run the following command to start the containers:
 
 - MySQL 8 na porta 3306
 - phpMyAdmin: http://localhost:8081 (login with root / root)
+
+
+```bash
+# quando o mysql parar do nada, tente:
+docker compose down
+docker compose up -d
+```

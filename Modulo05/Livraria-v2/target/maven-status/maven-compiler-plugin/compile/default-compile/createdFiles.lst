@@ -1,0 +1,6 @@
+br/ufscar/dc/dsw/dao/GenericDAO.class
+br/ufscar/dc/dsw/dao/LivroDAO.class
+br/ufscar/dc/dsw/domain/Livro.class
+br/ufscar/dc/dsw/dao/EditoraDAO.class
+br/ufscar/dc/dsw/domain/Editora.class
+br/ufscar/dc/dsw/controller/LivroController.class

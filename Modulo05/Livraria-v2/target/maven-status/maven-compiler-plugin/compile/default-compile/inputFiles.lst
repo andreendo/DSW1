@@ -1,0 +1,6 @@
+/home/andre/git/DSW1/Modulo05/Livraria-v2/src/main/java/br/ufscar/dc/dsw/domain/Livro.java
+/home/andre/git/DSW1/Modulo05/Livraria-v2/src/main/java/br/ufscar/dc/dsw/dao/EditoraDAO.java
+/home/andre/git/DSW1/Modulo05/Livraria-v2/src/main/java/br/ufscar/dc/dsw/dao/GenericDAO.java
+/home/andre/git/DSW1/Modulo05/Livraria-v2/src/main/java/br/ufscar/dc/dsw/dao/LivroDAO.java
+/home/andre/git/DSW1/Modulo05/Livraria-v2/src/main/java/br/ufscar/dc/dsw/controller/LivroController.java
+/home/andre/git/DSW1/Modulo05/Livraria-v2/src/main/java/br/ufscar/dc/dsw/domain/Editora.java

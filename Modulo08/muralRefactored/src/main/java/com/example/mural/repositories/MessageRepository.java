@@ -37,4 +37,8 @@ public class MessageRepository {
 //        return messageDAO.findAll();
 //        return messages;
     }
+
+    public void delete(Long id) {
+        messageDAO.deleteById(id);
+    }
 }
