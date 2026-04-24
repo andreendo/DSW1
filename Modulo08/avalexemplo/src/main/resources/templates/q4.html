@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<h2>Cadastro</h2>
+<form th:action="@{/q4}" method="post">
+    Nome: <input type="text" name="nome"><br><br>
+    Cargo:
+    <select name="cargo">
+        <option value="programador">Programador</option>
+        <option value="testador">Testador</option>
+        <option value="engenheiro_software">Engenheiro de Software</option>
+        <option value="analista_requisitos">Analista de Requisitos</option>
+    </select>
+    <br><br>
+    <fieldset>
+        <legend>Tecnologias de Domínio:</legend>
+        <input type="checkbox" name="tecnologia" value="java">Java<br>
+        <input type="checkbox" name="tecnologia" value="php">PHP<br>
+        <input type="checkbox" name="tecnologia" value="nodejs"> Node.js<br>
+        <input type="checkbox" name="tecnologia" value="cpp"> C++<br>
+        <input type="checkbox" name="tecnologia" value="dotnet"> Dot.Net
+    </fieldset>
+    <br><br>
+    <button type="submit">Cadastrar</button>
+</form>
+<br/>
+| <a th:href="@{/}">index</a> |
+</body>
+</html>

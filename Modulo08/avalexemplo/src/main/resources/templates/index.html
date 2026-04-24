@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Avaliação Exemplo</h1>
+    <h3>Questão 1</h3>
+    <ul>
+        <li><a th:href="@{/q1(p='ok')}">Q1 ok</a></li>
+        <li><a th:href="@{/q1(p='yes')}">Q1 yes</a></li>
+        <li><a th:href="@{/q1(p='no')}">Q1 no</a></li>
+    </ul>
+    <h3>Questão 2</h3>
+    <ul>
+        <li><a th:href="@{/q2(all=1)}">Q2 all=1</a></li>
+        <li><a th:href="@{/q2(all=2)}">Q2 all=2</a></li>
+    </ul>
+    <h3>Questão 4</h3>
+    <ul>
+        <li><a th:href="@{/q4}">Q4</a></li>
+    </ul>
+</body>
+</html>

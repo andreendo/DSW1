@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h3>Questão 2</h3>
+    <div th:if="${lista.size() == 0}">
+        <p>Lista Vazia</p>
+    </div>
+
+    <div th:if="${lista.size() > 0}">
+        <p>Tamanho da lista: <span th:text="${lista.size()}" /></p>
+        <th:block th:each="item : ${lista}">
+            <p th:text="${item}" />
+        </th:block>
+<!--    <p th:each="item : ${lista}" th:text="${item}">Text</p>     -->
+    </div>
+
+    <a th:href="@{/}">index</a>
+</body>
+</html>
