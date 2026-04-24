@@ -22,5 +22,8 @@ public class TestMuralDAO {
         muralDAO.addMensagem("a2", "b2", "c2");
 
         muralDAO.getMensagens().forEach(System.out::println);
+
+        int iid = muralDAO.addMensagemComID("aa", "bb", "cc");
+        System.out.println("ID generated: " + iid);
     }
 }

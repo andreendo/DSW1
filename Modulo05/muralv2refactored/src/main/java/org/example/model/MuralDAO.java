@@ -95,4 +95,26 @@ public class MuralDAO {
             throw new SQLException("Erro na atualização");
         }
     }
+
+    public int addMensagemComID(String de, String para, String texto) {
+        String sql = "INSERT INTO mensagem (de, para, texto, dataEnvio) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, de);
+            ps.setString(2, para);
+            ps.setString(3, texto);
+            ps.setString(4, sdf.format(new Date()));
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
+                }
+            }
+            return -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
 }

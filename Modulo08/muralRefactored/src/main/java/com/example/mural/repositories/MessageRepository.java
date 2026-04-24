@@ -41,4 +41,17 @@ public class MessageRepository {
     public void delete(Long id) {
         messageDAO.deleteById(id);
     }
+
+    public Message getMessage(Long id) {
+        return messageDAO.findById(id).orElse(null);
+    }
+
+    public void update(Message message) {
+        messageDAO.findById(message.getId())
+                .orElseThrow(() -> new RuntimeException("message not found"));
+
+        message.setTimestamp((new Date()).toString());
+        var saved = messageDAO.save(message);
+        logger.info("updating message: {}", saved);
+    }
 }

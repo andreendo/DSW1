@@ -13,6 +13,8 @@
 </ul>
 
 <form th:action="${message.getId() == null ? '/mensagem/create' : '/mensagem/edit'}" th:object="${message}" method="post">
+    <input type="hidden" name="id" th:value="${message.getId()}" th:if="${message.getId() != null}" />
+
     <label for="from">Enviado por:</label><br>
     <input type="text" th:field="*{from}"><br>
     <div th:if="${#fields.hasErrors('from')}" th:errors="*{from}" class="error-message"></div>

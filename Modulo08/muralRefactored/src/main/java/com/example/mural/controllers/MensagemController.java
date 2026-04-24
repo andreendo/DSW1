@@ -1,11 +1,10 @@
 package com.example.mural.controllers;
 
-import com.example.mural.dto.ListedMessage;
 import com.example.mural.dto.MessageDTO;
 import com.example.mural.dto.MessageFormDTO;
+import com.example.mural.mappers.MessageMapper;
 import com.example.mural.repositories.Message;
 import com.example.mural.repositories.MessageRepository;
-import com.example.mural.utils.MappingUtils;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +22,11 @@ public class MensagemController {
 
     private static final Logger log = LoggerFactory.getLogger(MensagemController.class);
     private MessageRepository messageRepository;
+    private MessageMapper messageMapper;
 
-    public MensagemController(MessageRepository messageRepository) {
+    public MensagemController(MessageRepository messageRepository,  MessageMapper messageMapper) {
         this.messageRepository = messageRepository;
+        this.messageMapper = messageMapper;
     }
 
     @GetMapping("/list")
@@ -73,7 +74,7 @@ public class MensagemController {
         if (result.hasErrors()) {
             return "mensagem/form";
         }
-        Message message = MappingUtils.mapMessageFormDTOToMessage(messageFormDTO);
+        Message message = messageMapper.toEntity(messageFormDTO);
         messageRepository.save(message);
 
         attr.addFlashAttribute("success", "message created");
@@ -83,9 +84,29 @@ public class MensagemController {
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, Model model) {
         log.info("Edit message {}", id);
-        var messageDTO = new MessageFormDTO();
-        messageDTO.setId(id);
-        model.addAttribute("message", messageDTO);
+        var message = messageRepository.getMessage(id);
+        var messageFormDTO = messageMapper.toDTO(message);
+        log.info("Edit messageFormDTO {}", messageFormDTO);
+
+        model.addAttribute("message", messageFormDTO);
         return "mensagem/form";
+    }
+
+    @PostMapping("/edit")
+    public String editMessage(@Valid @ModelAttribute("message") MessageFormDTO messageFormDTO, BindingResult result, RedirectAttributes attr) {
+        log.info("Edit message POST {}", messageFormDTO);
+        if (!result.hasErrors() && messageFormDTO.getFrom().equals(messageFormDTO.getTo())) {
+            result.rejectValue("from", "error.message", "From and to are the same");
+            result.rejectValue("to", "error.message", "From and to are the same");
+        }
+
+        if (result.hasErrors()) {
+            return "mensagem/form";
+        }
+        Message message = messageMapper.toEntity(messageFormDTO);
+        messageRepository.update(message);
+
+        attr.addFlashAttribute("success", "message updated");
+        return "redirect:/mensagem/list";
     }
 }
