@@ -2,10 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <h2>Cadastro</h2>
-<form th:action="@{/q4}" method="post">
-    Nome: <input type="text" name="nome"><br><br>
+
+<th:block th:if="${sucesso}">
+    <h3>Item cadastrado com sucesso.</h3>
+</th:block>
+
+<form th:action="@{/q4}" method="post" th:object="${funcionarioForm}">
+    Nome: <input type="text" th:field="*{nome}"><br><br>
     Cargo:
-    <select name="cargo">
+    <select th:field="*{cargo}">
         <option value="programador">Programador</option>
         <option value="testador">Testador</option>
         <option value="engenheiro_software">Engenheiro de Software</option>
@@ -14,11 +19,10 @@
     <br><br>
     <fieldset>
         <legend>Tecnologias de Domínio:</legend>
-        <input type="checkbox" name="tecnologia" value="java">Java<br>
-        <input type="checkbox" name="tecnologia" value="php">PHP<br>
-        <input type="checkbox" name="tecnologia" value="nodejs"> Node.js<br>
-        <input type="checkbox" name="tecnologia" value="cpp"> C++<br>
-        <input type="checkbox" name="tecnologia" value="dotnet"> Dot.Net
+        <div th:each="tecnologia : ${tecnologias}">
+            <input type="checkbox" th:field="*{tecnologias}" th:value="${tecnologia}"  />
+            <label th:text="${tecnologia}">Tecnologia</label>
+        </div>
     </fieldset>
     <br><br>
     <button type="submit">Cadastrar</button>

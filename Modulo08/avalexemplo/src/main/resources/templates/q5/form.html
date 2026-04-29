@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <h2 th:text="${categoryForm.id == null} ? #{form.add_category} : #{form.update_category}"></h2>
+
+    <form th:action="@{/q5/save}" method="post" th:object="${categoryForm}">
+        <input type="hidden" th:field="*{id}" />
+        Name: <input type="text" th:field="*{name}"><br><br>
+        Prioridade:
+        <select th:field="*{priority}">
+            <option th:each="priority : ${priorities}"
+                    th:value="${priority}"
+                    th:text="${priority}">
+                </option>
+        </select>
+        <br><br>
+        <fieldset>
+            <legend>Topics:</legend>
+            <div th:each="topic : ${topics}">
+                <input type="checkbox" th:field="*{topics}" th:value="${topic}"  />
+                <label th:text="${topic}">Topic</label>
+            </div>
+        </fieldset>
+        <br><br>
+        <button type="submit" th:text="${categoryForm.id == null ? 'Insert' : 'Update'}">Insert</button>
+    </form>
+    <br/>
+    | <a th:href="@{/q5/list}">List of Categories</a> |
+</body>
+</html>

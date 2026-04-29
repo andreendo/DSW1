@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h3>Questão 3 - Mostrar Sessão</h3>
+    <a th:href="@{/}">Index</a>
+    <br/>
+    <br/>
+    <p th:text="${'Session ID: ' + sessionId}"></p>
+    <p th:text="${'Last accessed: ' + lastAccessDate}"></p>
+    <p>
+        Nome: <span th:text="${pessoaForm.nome}"></span>
+        <br/>
+        Idade: <span th:text="${pessoaForm.idade}"></span>
+    </p>
+</body>
+</html>

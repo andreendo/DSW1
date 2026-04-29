@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h2>Cadastro</h2>
+    <form th:action="@{/q3criarsessao}" th:object="${pessoaForm}" method="post">
+        Nome: <input type="text" name="nome" th:field="*{nome}"><br><br>
+        Idade: <input type="text" name="idade" th:field="*{idade}"><br><br>
+        <button type="submit">Enviar</button>
+    </form>
+</body>
+</html>
