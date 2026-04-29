@@ -1,4 +1,4 @@
-package com.github.andreendo.avalexemplo.q5.model;
+package com.github.andreendo.avalexemplo.q5.repositories;
 
 import org.springframework.stereotype.Repository;
 

@@ -1,19 +1,28 @@
-package com.github.andreendo.avalexemplo.q5.controller;
+package com.github.andreendo.avalexemplo.q5.domain.entities;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryForm {
-
+@Entity
+public class Category {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(nullable = false)
     private String priority;
 
+    @ElementCollection
+    @CollectionTable(
+            name = "category_topic",
+            joinColumns = @JoinColumn(name = "category_id")
+    )
+    @Column(name = "topic_name")
     private List<String> topics = new ArrayList<>();
 
     public Long getId() {
@@ -50,7 +59,7 @@ public class CategoryForm {
 
     @Override
     public String toString() {
-        return "CategoryForm{" +
+        return "Category{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", priority='" + priority + '\'' +
