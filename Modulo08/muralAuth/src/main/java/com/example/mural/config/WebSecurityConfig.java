@@ -42,21 +42,6 @@ public class WebSecurityConfig {
         return http.build();
     }
 
-    //adicionar
-    @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
-    }
-
-    @Bean
-    public DaoAuthenticationProvider authProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
-
     /*@Bean
     public UserDetailsService users() {
         UserDetails user = User.withUsername("andre")
