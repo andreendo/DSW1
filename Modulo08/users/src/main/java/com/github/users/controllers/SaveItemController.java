@@ -30,7 +30,12 @@ public class SaveItemController {
     }
 
     @PostMapping("/save")
-    public String saveItem(@Valid @ModelAttribute("item") ItemAddForm itemAddForm, BindingResult bindingResult, Authentication authentication, RedirectAttributes redirectAttributes) {
+    public String saveItem(
+            @Valid @ModelAttribute("item") ItemAddForm itemAddForm,
+            BindingResult bindingResult,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes
+    ) {
         if (bindingResult.hasErrors()) {
             return "item/form";
         }
@@ -38,6 +43,7 @@ public class SaveItemController {
         itemService.saveItem(itemAddForm, authentication.getName());
         redirectAttributes.addFlashAttribute("message", "Item saved successfully");
 
+        // Determina para qual rota redirecionar de acordo com o perfil
         if (authentication.getAuthorities()
                 .stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))

@@ -42,7 +42,10 @@ public class Q5Controller {
     }
 
     @PostMapping("/save")
-    public String addPost(@ModelAttribute CategoryForm categoryForm, Model model, RedirectAttributes redirectAttributes) {
+    public String addPost(
+            @ModelAttribute CategoryForm categoryForm,
+            Model model,
+            RedirectAttributes redirectAttributes) {
         log.info("POST /q5/save {}", categoryForm);
 
         categoryService.save(categoryForm);
@@ -56,7 +59,9 @@ public class Q5Controller {
     }
 
     @GetMapping("/delete")
-    public String delete(@RequestParam(name = "id", required = true) long id, RedirectAttributes redirectAttributes) {
+    public String delete(
+            @RequestParam(name = "id", required = true) long id,
+            RedirectAttributes redirectAttributes) {
         log.info("GET /q5/delete?id={}", id);
 
         redirectAttributes.addFlashAttribute("message", "Category removed!");
@@ -66,7 +71,8 @@ public class Q5Controller {
     }
 
     @GetMapping("/edit")
-    public String edit(@RequestParam(name = "id", required = true) long id, Model model) {
+    public String edit(@RequestParam(name = "id", required = true) long id,
+                       Model model) {
         log.info("GET /q5/edit?id={}", id);
 
         model.addAttribute("priorities", categoryService.getAllPriorities());

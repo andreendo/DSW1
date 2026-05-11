@@ -28,6 +28,7 @@ public class AdminController {
         logger.info("GET admin/main user: {}", currentUser);
 
         // Improvement: show edit/delete options only for items with permission
+
         model.addAttribute("items", itemService.findAll());
 
         return "admin/main";

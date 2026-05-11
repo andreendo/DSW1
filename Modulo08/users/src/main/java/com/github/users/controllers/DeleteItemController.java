@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/items")
+@RequestMapping("/item")
 public class DeleteItemController {
 
     private static final Logger logger = LoggerFactory.getLogger(DeleteItemController.class);
@@ -22,7 +22,11 @@ public class DeleteItemController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteItem(@PathVariable("id") Long id, Authentication authentication, RedirectAttributes redirectAttributes) {
+    public String deleteItem(
+            @PathVariable("id") Long id,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes
+    ) {
         var userRole = authentication.getAuthorities().iterator().next();
         logger.info("Delete item id: {} (Role: {})", id, userRole);
 

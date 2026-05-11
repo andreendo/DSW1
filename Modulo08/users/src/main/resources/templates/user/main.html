@@ -9,7 +9,7 @@
     <script>
         function deleteItem(id) {
             // 1. Construct the URL for your delete controller
-            const deleteUrl = '/items/delete/' + id;
+            const deleteUrl = '/item/delete/' + id;
 
             // 2. Update the 'href' of the confirm button in the modal
             const confirmBtn = document.getElementById('confirmDeleteBtn');
@@ -69,7 +69,7 @@
                     </td>
                     <td>
                         <div class="btn-group btn-group-sm">
-                            <a th:href="@{/items/edit/{id}(id=${item.id})}" class="btn btn-outline-primary">Edit</a>
+                            <a th:href="@{/item/edit/{id}(id=${item.id})}" class="btn btn-outline-primary">Edit</a>
                             <button type="button" class="btn btn-outline-danger"
                                     th:onclick="'deleteItem(' + ${item.id} + ')'">Delete</button>
                         </div>
