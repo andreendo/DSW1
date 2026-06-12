@@ -1,7 +1,6 @@
 package com.github.userrest.controllers;
 
 import com.github.userrest.domain.dtos.ItemListForm;
-import com.github.userrest.domain.entities.Item;
 import com.github.userrest.services.ItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

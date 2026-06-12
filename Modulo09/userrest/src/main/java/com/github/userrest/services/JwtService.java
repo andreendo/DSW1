@@ -10,6 +10,7 @@ import java.util.Date;
 
 @Service
 public class JwtService {
+    // usar uma variável de ambiente na prática
     private final String SECRET = String.valueOf(Jwts.SIG.HS256.key().build());
     private final SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
