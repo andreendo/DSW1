@@ -1,0 +1,5 @@
+/home/andre/git/DSW1/Modulo09/CidadesRS-v3/Client/src/main/java/br/ufscar/dc/dsw/ClienteRSApplication.java
+/home/andre/git/DSW1/Modulo09/CidadesRS-v3/Client/src/main/java/br/ufscar/dc/dsw/domain/Cidade.java
+/home/andre/git/DSW1/Modulo09/CidadesRS-v3/Client/src/main/java/br/ufscar/dc/dsw/domain/Estado.java
+/home/andre/git/DSW1/Modulo09/CidadesRS-v3/Client/src/main/java/br/ufscar/dc/dsw/service/impl/RestClientService.java
+/home/andre/git/DSW1/Modulo09/CidadesRS-v3/Client/src/main/java/br/ufscar/dc/dsw/service/spec/IRestClientService.java

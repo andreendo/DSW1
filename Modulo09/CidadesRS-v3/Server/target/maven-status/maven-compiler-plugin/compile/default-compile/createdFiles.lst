@@ -1,0 +1,12 @@
+br/ufscar/dc/dsw/dao/ICidadeDAO.class
+br/ufscar/dc/dsw/service/impl/CidadeService.class
+br/ufscar/dc/dsw/service/spec/IEstadoService.class
+br/ufscar/dc/dsw/domain/Cidade.class
+br/ufscar/dc/dsw/dao/IEstadoDAO.class
+br/ufscar/dc/dsw/domain/Estado.class
+br/ufscar/dc/dsw/controller/EstadoRestController.class
+br/ufscar/dc/dsw/domain/AbstractEntity.class
+br/ufscar/dc/dsw/service/impl/EstadoService.class
+br/ufscar/dc/dsw/CidadesRSApplication.class
+br/ufscar/dc/dsw/controller/CidadeRestController.class
+br/ufscar/dc/dsw/service/spec/ICidadeService.class

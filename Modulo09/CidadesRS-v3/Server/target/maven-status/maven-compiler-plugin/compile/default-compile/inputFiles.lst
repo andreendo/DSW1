@@ -1,0 +1,12 @@
+/home/andre/git/DSW1/Modulo09/CidadesRS-v3/Server/src/main/java/br/ufscar/dc/dsw/CidadesRSApplication.java
+/home/andre/git/DSW1/Modulo09/CidadesRS-v3/Server/src/main/java/br/ufscar/dc/dsw/controller/CidadeRestController.java
+/home/andre/git/DSW1/Modulo09/CidadesRS-v3/Server/src/main/java/br/ufscar/dc/dsw/controller/EstadoRestController.java
+/home/andre/git/DSW1/Modulo09/CidadesRS-v3/Server/src/main/java/br/ufscar/dc/dsw/dao/ICidadeDAO.java
+/home/andre/git/DSW1/Modulo09/CidadesRS-v3/Server/src/main/java/br/ufscar/dc/dsw/dao/IEstadoDAO.java
+/home/andre/git/DSW1/Modulo09/CidadesRS-v3/Server/src/main/java/br/ufscar/dc/dsw/domain/AbstractEntity.java
+/home/andre/git/DSW1/Modulo09/CidadesRS-v3/Server/src/main/java/br/ufscar/dc/dsw/domain/Cidade.java
+/home/andre/git/DSW1/Modulo09/CidadesRS-v3/Server/src/main/java/br/ufscar/dc/dsw/domain/Estado.java
+/home/andre/git/DSW1/Modulo09/CidadesRS-v3/Server/src/main/java/br/ufscar/dc/dsw/service/impl/CidadeService.java
+/home/andre/git/DSW1/Modulo09/CidadesRS-v3/Server/src/main/java/br/ufscar/dc/dsw/service/impl/EstadoService.java
+/home/andre/git/DSW1/Modulo09/CidadesRS-v3/Server/src/main/java/br/ufscar/dc/dsw/service/spec/ICidadeService.java
+/home/andre/git/DSW1/Modulo09/CidadesRS-v3/Server/src/main/java/br/ufscar/dc/dsw/service/spec/IEstadoService.java
